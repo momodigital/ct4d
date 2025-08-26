@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analisis Angka Ikut 4D</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Analisis Angka Ikut 4D</h1>
+    <p>Masukkan 11+ hasil 4D sebelumnya. Sistem akan analisis <strong>angka ikut 6 digit per putaran</strong> dengan bobot tren terbaru.</p>
+
+    <form method="POST">
+      <textarea 
+        name="histori" 
+        placeholder="1234&#10;5678&#10;1122&#10;..." 
+        rows="10" 
+        cols="50">{{ input }}</textarea>
+      <br/>
+      <button type="submit">🔍 Analisis</button>
+    </form>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if hasil and not hasil.error %}
+      <h2>📊 Hasil Analisis</h2>
+      <table>
+        <tr><th>#</th><th>Hasil</th><th>Angka Ikut (6D)</th><th>Status</th></tr>
+        {% for r in hasil.results %}
+        <tr class="{{ 'success' if r.status == 'MASUK' else 'fail' }}">
+          <td>{{ r.putaran }}</td>
+          <td>{{ r.hasil }}</td>
+          <td>{{ r.angka_ikut }}</td>
+          <td>{{ r.status }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <div class="summary">
+        <strong>Akurasi:</strong> {{ hasil.ringkasan.total_masuk }}/{{ hasil.ringkasan.total }} 
+        ({{ hasil.ringkasan.akurasi }}%)
+      </div>
+
+      <div class="recommendation">
+        <h3>🔮 Rekomendasi Angka Ikut Berikutnya:</h3>
+        <div class="next-num">{{ hasil.rekomendasi }}</div>
+      </div>
+
+    {% elif hasil and hasil.error %}
+      <div class="error">{{ hasil.error }}</div>
+    {% endif %}
+
+  </div>
+</body>
+</html>
